@@ -1,0 +1,30 @@
+version: "3"
+volumes:
+  node_modules:
+services:
+  chromium:
+    ports:
+      - "9222:9222"
+  go-server:
+    build:
+      context: ./
+      dockerfile: ./backend/docker/dev/Dockerfile
+    depends_on:
+      - go-server-common
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_PTRACE
+    ports:
+      - "9090:9090"
+      - "40000:40000"
+  frontend-client:
+    build:
+      context: ./frontend
+      dockerfile: ./docker/dev/Dockerfile
+    environment:
+      MODE: 'dev'
+    volumes:
+    - "./frontend:/app"
+    - "./frontend/src:/app/src"
+    - "node_modules:/app/node_modules"

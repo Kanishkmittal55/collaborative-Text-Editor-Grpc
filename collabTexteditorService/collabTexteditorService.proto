@@ -1,0 +1,61 @@
+syntax = "proto3";
+package collabTexteditorService;
+
+option go_package = "github.com/Kanishkmittal55/collabTexteditorService";
+
+service CollabTexteditorService {
+    rpc JoinSession(JoinSessionRequest) returns (JoinSessionResponse);
+    rpc CreateSessionId(Empty) returns (SessionResponse);
+    rpc SendLocalUpdate(LocalUpdateRequest) returns (LocalUpdateReply);
+    rpc SubscribeForRemoteUpdates(RemoteUpdateRequest) returns (stream RemoteUpdateResponse);
+}
+
+message Empty {
+}
+
+message SessionResponse {
+    string sessionId = 1;
+}
+
+message JoinSessionRequest {
+    string sessionId = 1;
+    string nickName = 2;
+}
+
+message JoinSessionResponse {
+    int64 replicaId = 1;
+}
+
+message LocalUpdateRequest {
+    TiTreeNode node = 1;
+    int64 replicaId = 2;
+    string sessionId = 3;
+}
+
+message LocalUpdateReply {
+    string statusMessage = 1;
+}
+
+message RemoteUpdateRequest {
+    int64 replicaId = 1;
+    string sessionId = 2;
+}
+
+message RemoteUpdateResponse {
+    int64 senderReplicaId = 1;
+    TiTreeNode node = 2;
+    string nickname = 3;
+}
+
+message TiTreeNode {
+    Timestamp timestamp = 1;
+    Timestamp parentTimestamp = 2;
+    string value = 3;
+    bool tombstone = 4;
+    repeated Timestamp childrenTimestamps = 5;
+
+    message Timestamp {
+        int64 replicaId = 1;
+        int64 id = 2;
+    }
+}
