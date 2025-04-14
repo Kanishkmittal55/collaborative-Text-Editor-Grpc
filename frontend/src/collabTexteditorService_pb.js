@@ -1957,6 +1957,3 @@ proto.collabTexteditorService.TiTreeNode.prototype.clearChildrentimestampsList =
 
 
 goog.object.extend(exports, proto.collabTexteditorService);
-
-
-// Kanishk Mittal

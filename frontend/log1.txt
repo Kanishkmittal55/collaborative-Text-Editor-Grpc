@@ -1,0 +1,52 @@
+.
+├── babel.config.json
+├── dist
+├── docker
+│   ├── chromium
+│   │   └── Dockerfile
+│   ├── common
+│   │   └── Dockerfile
+│   ├── dev
+│   │   └── Dockerfile
+│   └── prod
+│       └── Dockerfile
+├── index.html
+├── karma.conf.js
+├── log1.txt
+├── package-lock.json
+├── package.json
+├── spec
+│   ├── collabTexteditorModelTransformer.spec.js
+│   ├── crdt.spec.js
+│   ├── editor.spec.js
+│   ├── newLineArray.spec.js
+│   ├── support
+│   │   └── jasmine.json
+│   ├── tiTree.spec.js
+│   └── tiTreeNode.spec.js
+├── src
+│   ├── assets
+│   │   └── paper1.jpg
+│   ├── collabTexteditorClient.js
+│   ├── collabTexteditorModelTransformer.js
+│   ├── collabTexteditorService_grpc_web_pb.js
+│   ├── collabTexteditorService_pb.js
+│   ├── controller.js
+│   ├── crdt
+│   │   ├── crdt.js
+│   │   ├── newLineArray.js
+│   │   └── tiTree.js
+│   ├── editor.js
+│   ├── main.js
+│   ├── model
+│   │   ├── changeObject.js
+│   │   ├── position.js
+│   │   ├── tiTreeNode.js
+│   │   └── timestamp.js
+│   ├── styles
+│   │   └── styles.scss
+│   └── ui.js
+├── webpack.development.config.js
+└── webpack.production.config.js
+
+14 directories, 36 files

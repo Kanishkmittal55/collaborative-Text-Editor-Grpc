@@ -1,6 +1,6 @@
 # Documentation
 
-## Overview
+## Table of Contents
 
 * [TechStack](#techstack)
 * [The RGA-Protocol](#the-rga-protocol)
@@ -19,11 +19,8 @@
 The complete project is built with *Docker* and *Docker Compose*.
 
 Used Technologies for the Backend:
-* Go (go1.23)
+* Go (go1.13)
 * Delve debugger
-
-Contract Layer :
-* Protobuf , protoc
 
 Used Technologies for the Frontend-Clients:
 * [CodeMirror](https://codemirror.net)
@@ -111,12 +108,12 @@ the unique ```sessionId```.
 
 ```protobuf
 rpc CreateSessionId(Empty) returns (SessionResponse);
-    
+	
 message Empty {
 }
-    
+	
 message SessionResponse {
-    string sessionId = 1;
+	string sessionId = 1;
 }
 ```
 
@@ -131,14 +128,14 @@ a unique  ```replicaId```.
 
 ```protobuf
 rpc JoinSession(JoinSessionRequest) returns (JoinSessionResponse);
-    
+	
 message JoinSessionRequest {
-    string sessionId = 1;
-    string nickName = 2;
+	string sessionId = 1;
+	string nickName = 2;
 }
-    
+	
 message JoinSessionResponse {
-    int64 replicaId = 1;
+	int64 replicaId = 1;
 }
 ```
 
@@ -150,15 +147,15 @@ to the correct session the server needs the ```sessionId```.
 
 ```protobuf
 rpc SendLocalUpdate(LocalUpdateRequest) returns (LocalUpdateResponse);
-    
+	
 message LocalUpdateRequest {
-    TiTreeNode node = 1;
-    int64 replicaId = 2;
-    string sessionId = 3;
+	TiTreeNode node = 1;
+	int64 replicaId = 2;
+	string sessionId = 3;
 }
-    
+	
 message LocalUpdateResponse {
-    string statusMessage = 1;
+	string statusMessage = 1;
 }
 ```
 
@@ -170,16 +167,16 @@ send all former changes of the session and all upcoming changes.
 
 ```protobuf
 rpc SubscribeForRemoteUpdates(RemoteUpdateRequest) returns (stream RemoteUpdateResponse);
-            
+			
 message RemoteUpdateRequest {
-    int64 replicaId = 1;
-    string sessionId = 2;
+	int64 replicaId = 1;
+	string sessionId = 2;
 }
-    
+	
 message RemoteUpdateResponse {
-    int64 senderReplicaId = 1;
-    TiTreeNode node = 2;
-    string nickname = 3;
+	int64 senderReplicaId = 1;
+	TiTreeNode node = 2;
+	string nickname = 3;
 }
 ```
 
@@ -208,19 +205,19 @@ stream to a replica of the session.
 
 ```go
 type Repository struct {
-    Sessions map[string]*Session
+	Sessions map[string]*Session
 }
-        
+		
 type Session struct {
-    NextFreeReplicaId int
-    Replicas          map[int]*Replica
-    History           []*pb.RemoteUpdateResponse
+	NextFreeReplicaId int
+	Replicas          map[int]*Replica
+	History           []*pb.RemoteUpdateResponse
 }
-        
+		
 type Replica struct {
-    ReplicaId int
-    NickName  string
-    Channel   chan *pb.RemoteUpdateResponse
+	ReplicaId int
+	NickName  string
+	Channel   chan *pb.RemoteUpdateResponse
 }
 ```
 
