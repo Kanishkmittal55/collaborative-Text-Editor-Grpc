@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"crypto/rand"
 	"encoding/base32"
 	"errors"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -18,7 +18,6 @@ import (
 	openai "github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
 	"google.golang.org/grpc/reflection"
-
 )
 
 const (
@@ -285,7 +284,7 @@ func main() {
 	log.Println("Starting go server ...")
 
 	// 2) Grab the OpenAI API key
-	apiKey := "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"
+	apiKey := os.Getenv("OPENAI_API_KEY")
 	if apiKey == "" {
 		log.Println("Warning: no OPENAI_API_KEY found. Diagram service calls will fail!")
 	}

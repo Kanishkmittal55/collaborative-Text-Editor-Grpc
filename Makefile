@@ -41,3 +41,7 @@ generate-text-editor-service-backend-proto:
 
 up:
 	@docker-compose -f docker-compose.dev.yml -f docker-compose.yml up --build
+
+
+down:
+	@docker-compose down
