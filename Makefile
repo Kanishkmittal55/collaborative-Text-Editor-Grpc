@@ -19,3 +19,25 @@ generate-frontend-proto:
 		--js_out=import_style=commonjs:$(OUT_DIR) \
 		--grpc-web_out=import_style=commonjs,mode=grpcwebtext:$(OUT_DIR) \
 		$(PROTO_SRC)
+
+
+PROTO_SRC_2 = collabDiagrameditorService.proto
+OUT_DIR = collabTextEditorService
+PROTO_DIR := collabTexteditorService
+generate-diagram-service-backend-proto:
+	@echo "Generating Go gRPC code for diagram service..."
+	protoc \
+		-I=$(PROTO_DIR) \
+		--go_out=paths=source_relative:$(OUT_DIR) \
+		--go-grpc_out=paths=source_relative:$(OUT_DIR) \
+		$(PROTO_DIR)/$(PROTO_SRC_2)
+
+
+generate-text-editor-service-backend-proto:
+	@echo "Generating Go gRPC code for Text Editor Service"
+	protoc \
+		 -I collabTexteditorService/collabTexteditorService/collabTexteditorService.proto --go_out=plugins=grpc:collabTexteditorService
+
+
+up:
+	@docker-compose -f docker-compose.dev.yml -f docker-compose.yml up --build

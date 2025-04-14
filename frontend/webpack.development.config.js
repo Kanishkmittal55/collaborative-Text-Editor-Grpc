@@ -66,6 +66,19 @@ module.exports = {
           'sass-loader',
         ],
       },
+      // Adding this for images:
+      {
+        test: /\.(png|jpg|gif|svg)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'images/',
+            },
+          },
+        ],
+      }
     ],
   },
   watchOptions: {

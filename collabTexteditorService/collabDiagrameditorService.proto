@@ -1,0 +1,19 @@
+syntax = "proto3";
+package collabTexteditorService;
+
+option go_package = "github.com/Kanishkmittal55/collabTexteditorService";
+
+service CollabDiagramEditorService {
+    rpc GenerateDiagram (GenerateDiagramRequest) returns (GenerateDiagramResponse);
+}
+
+message GenerateDiagramRequest {
+    string sessionId = 1;
+    int64 replicaId = 2;
+    string selectedText = 3;
+}
+
+
+message GenerateDiagramResponse {
+    string plantUmlCode = 1;
+}

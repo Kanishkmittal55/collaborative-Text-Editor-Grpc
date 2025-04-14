@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"crypto/rand"
 	"encoding/base32"
 	"errors"
@@ -13,6 +14,11 @@ import (
 	pb "github.com/Kanishkmittal55/collaborative-text-editor/collabTexteditorService"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+
+	openai "github.com/openai/openai-go"
+	"github.com/openai/openai-go/option"
+	"google.golang.org/grpc/reflection"
+
 )
 
 const (
@@ -22,6 +28,12 @@ const (
 type collabTexteditorService struct {
 	pb.UnimplementedCollabTexteditorServiceServer
 	repository *Repository
+}
+
+// Registering the service in the same server
+type collabDiagrameditorService struct {
+	pb.UnimplementedCollabDiagramEditorServiceServer
+	openAIClient openai.Client
 }
 
 type Repository struct {
@@ -38,6 +50,71 @@ type Replica struct {
 	ReplicaId int
 	NickName  string
 	Channel   chan *pb.RemoteUpdateResponse
+}
+
+// collabDiagrameditorService is where we integrate with openai-go
+func (d *collabDiagrameditorService) GenerateDiagram(ctx context.Context, req *pb.GenerateDiagramRequest) (*pb.GenerateDiagramResponse, error) {
+	selectedText := req.GetSelectedText()
+	if selectedText == "" {
+		// Return a default UML snippet if no text
+		return &pb.GenerateDiagramResponse{PlantUmlCode: d.defaultUML()}, nil
+	}
+
+	// Construct a prompt for the LLM
+	prompt := fmt.Sprintf(`Given the following text, create a valid PlantUML diagram snippet (with @startuml and @enduml) that best represents it:
+
+		-----
+		%s
+		-----
+
+		Output only PlantUML code.`, selectedText)
+
+	// Call the Chat Completions endpoint
+	resp, err := d.openAIClient.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage("You are an assistant that outputs only valid PlantUML code."),
+			openai.UserMessage(prompt),
+		},
+		Model: openai.ChatModelChatgpt4oLatest, // or GPT4o, or any model supported in your library
+	})
+	if err != nil {
+		log.Printf("OpenAI call error: %v\n", err)
+		// fallback if error
+		return &pb.GenerateDiagramResponse{PlantUmlCode: d.defaultUML()}, nil
+	}
+
+	if len(resp.Choices) == 0 {
+		log.Println("No choices returned from OpenAI, using fallback UML.")
+		return &pb.GenerateDiagramResponse{PlantUmlCode: d.defaultUML()}, nil
+	}
+
+	// Grab text from the first choice
+	plantUml := resp.Choices[0].Message.Content
+	if !d.isValidUML(plantUml) {
+		log.Println("PlantUML code from LLM not valid, using fallback UML.")
+		plantUml = d.defaultUML()
+	}
+
+	// Return the generated diagram
+	return &pb.GenerateDiagramResponse{PlantUmlCode: plantUml}, nil
+}
+
+// Simple check if snippet contains @startuml / @enduml
+func (d *collabDiagrameditorService) isValidUML(u string) bool {
+	return len(u) > 0 && contains(u, "@startuml") && contains(u, "@enduml")
+}
+
+// Returns a safe fallback snippet
+func (d *collabDiagrameditorService) defaultUML() string {
+	return `@startuml
+Alice -> Bob: Hello
+Bob --> Alice: I got your message
+@enduml`
+}
+
+// A naive substring helper
+func contains(s, sub string) bool {
+	return len(s) >= len(sub)
 }
 
 func (c *collabTexteditorService) CreateSessionId(ctx context.Context, request *pb.Empty) (*pb.SessionResponse, error) {
@@ -207,10 +284,27 @@ func main() {
 
 	log.Println("Starting go server ...")
 
+	// 2) Grab the OpenAI API key
+	apiKey := "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"
+	if apiKey == "" {
+		log.Println("Warning: no OPENAI_API_KEY found. Diagram service calls will fail!")
+	}
+
+	log.Println("Starting go server ...")
+
+	// 3) Build the text editor service
 	serverData := &Repository{Sessions: make(map[string]*Session)}
 	repository := &collabTexteditorService{
 		UnimplementedCollabTexteditorServiceServer: pb.UnimplementedCollabTexteditorServiceServer{},
 		repository: serverData,
+	}
+
+	// 4) Build the diagram service
+	//    Create an openai.Client with the key
+	diagramClient := openai.NewClient(option.WithAPIKey(apiKey))
+	diagramService := &collabDiagrameditorService{
+		UnimplementedCollabDiagramEditorServiceServer: pb.UnimplementedCollabDiagramEditorServiceServer{},
+		openAIClient: diagramClient,
 	}
 
 	lis, err := net.Listen("tcp", port)
@@ -219,8 +313,11 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-
 	pb.RegisterCollabTexteditorServiceServer(s, repository)
+	pb.RegisterCollabDiagramEditorServiceServer(s, diagramService)
+
+	// 6) Enable gRPC reflection
+	reflection.Register(s)
 
 	go func() {
 		if err := s.Serve(lis); err != nil {

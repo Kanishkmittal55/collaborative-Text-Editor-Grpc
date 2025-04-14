@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
 $orange: #ff430f;
 $darkOrange: #be350d;
 $dark: #1c1c1c;
 $grey: #959595;
 $bodyBackgroundColor: #333333;
 $bright: #FFFFFF;
+$handwrittenFont: 'Arial';
 
 body {
   background: $dark;
@@ -28,8 +31,28 @@ body {
 }
 
 .CodeMirror {
+  background: url('../assets/paper1.jpg'); 
+  background-size: auto;  // or "auto" depending on your image
+  color: #000;              // black text
+  font-family: $handwrittenFont;
+  font-size: 1.2rem;
   line-height: 1.8em;
 }
+
+// // Overriding Codemirror styles - 
+// /* Let’s override 3024-day’s background color and text color: */
+// .cm-s-3024-day.CodeMirror {
+//   background: #ffffff !important;
+//   color: #000 !important;
+// }
+
+// /* If you want to style keywords or comments differently,
+//    look in 3024-day.css for the relevant classes (e.g. .cm-comment)
+//    and override them. */
+// .cm-s-3024-day .cm-comment {
+//   color: #008000 !important;
+//   font-style: italic;
+// }
 
 .cursorElement {
   border-left-style: solid;

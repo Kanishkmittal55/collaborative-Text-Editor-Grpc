@@ -1,11 +1,11 @@
 import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/3024-night.css';
+import 'codemirror/theme/3024-day.css';
 import 'codemirror/mode/markdown/markdown.js';
 import {CHANGE_OBJECT_TYPE, ChangeObject} from './model/changeObject';
 import {Position} from './model/position';
 
-const NIGHT_THEME = '3024-night';
+const NIGHT_THEME = '3024-day';
 const MARKDOWN_MODE = 'markdown';
 const LOG_OBJECT = '[editor] ';
 const LINE_SEPARATOR = '\n';
