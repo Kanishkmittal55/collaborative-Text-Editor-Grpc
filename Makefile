@@ -40,7 +40,8 @@ generate-text-editor-service-backend-proto:
 		--go_out=plugins=grpc:collabTexteditorService \
 		collabTexteditorService/collabTexteditorService.proto
 
-up:
+up:	
+	@docker-compose down
 	@docker-compose -f docker-compose.dev.yml -f docker-compose.yml up --build
 
 down:

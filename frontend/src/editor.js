@@ -25,6 +25,7 @@ class Editor {
     });
 
     const _bookmarkMap = new Map();
+    let _selectionPopup = null;
 
     /**
      * Subscribe for updates. Callback will be executed if
@@ -131,6 +132,108 @@ class Editor {
         return true;
       }
       return false;
+    };
+
+    // ---------- ADDED MORE DEBUG STATEMENTS HERE ----------
+    /* ----------------------------------------------------------------
+     *  NEW CODE: Use CodeMirror’s selection interface to detect a user
+     *            making (or clearing) a text selection.
+     * ---------------------------------------------------------------- */
+    _editor.on('beforeSelectionChange', (cmInstance, selectionObj) => {
+      // Debug info about the selection
+      console.debug(
+          LOG_OBJECT + 'beforeSelectionChange event fired:',
+          selectionObj,
+      );
+
+      // We can look at selectionObj.ranges[] to see the new selection(s).
+      // For simplicity, we’ll just check if there is a non-empty selection
+      // in the primary range. If so, show the popup; if not, hide it.
+
+      // The new set of ranges:
+      const newRanges = selectionObj.ranges;
+      if (!newRanges || newRanges.length === 0) {
+        hideSelectionPopup();
+        return;
+      }
+
+      const firstRange = newRanges[0];
+      // A range has .anchor and .head. If they're equal, there's no selection.
+      const isEmpty = (
+        firstRange.anchor.line === firstRange.head.line &&
+        firstRange.anchor.ch === firstRange.head.ch
+      );
+
+      if (isEmpty) {
+        // No actual text selected
+        hideSelectionPopup();
+      } else {
+        // There is a selection. Let's figure out the 'from' coordinate
+        // so we can place our pop-up near the start of that selection.
+        const fromPos = comparePositions(firstRange.anchor, firstRange.head) <= 0 ?
+          firstRange.anchor :
+          firstRange.head;
+
+        // Convert that 'fromPos' to page coords
+        const coords = cmInstance.charCoords(fromPos, 'page');
+        console.debug(
+            LOG_OBJECT + `Selection fromPos= line:${fromPos.line}, ch:${fromPos.ch}, coords=`,
+            coords,
+        );
+
+        showSelectionPopup(coords.left, coords.top);
+      }
+    });
+
+    /* ----------------------------------------------------------------
+     *  Helper function to compare line/ch positions
+     * ---------------------------------------------------------------- */
+    const comparePositions = (posA, posB) => {
+      // If posA < posB => negative; if posA === posB => 0; else positive
+      return CodeMirror.cmpPos(posA, posB);
+    };
+
+    /**
+     * Creates a small pop-up and positions it
+     * @param {number} x The x-position (in px) for the pop-up
+     * @param {number} y The y-position (in px) for the pop-up
+     */
+    const showSelectionPopup = (x, y) => {
+      console.debug(LOG_OBJECT + 'showSelectionPopup() at x=' + x + ', y=' + y);
+
+      // Remove existing popup if any
+      hideSelectionPopup();
+
+      _selectionPopup = document.createElement('div');
+      _selectionPopup.id = 'selectionPopup';
+      _selectionPopup.textContent = 'Click me!';
+      _selectionPopup.style.position = 'absolute';
+      _selectionPopup.style.top = y + 'px';
+      _selectionPopup.style.left = x + 'px';
+      _selectionPopup.style.background = '#f0f0f0';
+      _selectionPopup.style.border = '1px solid #333';
+      _selectionPopup.style.padding = '5px';
+      _selectionPopup.style.cursor = 'pointer';
+      _selectionPopup.style.zIndex = 9999;
+
+      // On click, log to the console
+      _selectionPopup.addEventListener('click', () => {
+        console.log('I am clicked');
+      });
+
+      document.body.appendChild(_selectionPopup);
+    };
+
+    /**
+     * Removes the pop-up if it exists
+     */
+    const hideSelectionPopup = () => {
+      console.debug(LOG_OBJECT + 'hideSelectionPopup() called');
+      if (_selectionPopup) {
+        document.body.removeChild(_selectionPopup);
+        _selectionPopup = null;
+        console.debug(LOG_OBJECT + 'Selection popup removed');
+      }
     };
 
     /**

@@ -11,7 +11,9 @@
 │       └── prod
 │           └── Dockerfile
 ├── collabTexteditorService
+│   ├── collabDiagrameditorService.pb.go
 │   ├── collabDiagrameditorService.proto
+│   ├── collabDiagrameditorService_grpc.pb.go
 │   ├── collabTexteditorService.pb.go
 │   └── collabTexteditorService.proto
 ├── docker-compose.dev.yml
@@ -19,9 +21,12 @@
 ├── docker-compose.yml
 ├── documentation
 │   ├── SystemDesign.md
-│   ├── adding_a_service.md
-│   ├── collab-texteditor-browser.png
-│   └── documentation.md
+│   └── components
+│       ├── CRDT.md
+│       ├── ReplicaManagement.md
+│       ├── backend.md
+│       ├── collab-texteditor-browser.png
+│       └── frontend.md
 ├── envoy
 │   ├── Dockerfile
 │   └── envoy.yaml
@@ -37,8 +42,10 @@
 │   │   │   └── Dockerfile
 │   │   └── prod
 │   │       └── Dockerfile
+│   ├── documentation.md
 │   ├── index.html
 │   ├── karma.conf.js
+│   ├── log1.txt
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── spec
@@ -53,6 +60,8 @@
 │   ├── src
 │   │   ├── assets
 │   │   │   └── paper1.jpg
+│   │   ├── collabDiagrameditorService_grpc_web_pb.js
+│   │   ├── collabDiagrameditorService_pb.js
 │   │   ├── collabTexteditorClient.js
 │   │   ├── collabTexteditorModelTransformer.js
 │   │   ├── collabTexteditorService_grpc_web_pb.js
@@ -78,4 +87,4 @@
 ├── go.sum
 └── log1.txt
 
-23 directories, 56 files
+24 directories, 64 files

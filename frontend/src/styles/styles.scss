@@ -4,19 +4,19 @@ $orange: #ff430f;
 $darkOrange: #be350d;
 $dark: #1c1c1c;
 $grey: #959595;
+$lightGrey: #D3D3D3;
 $bodyBackgroundColor: #333333;
 $bright: #FFFFFF;
 $handwrittenFont: 'Arial';
 
 body {
-  background: $dark;
+  background: $lightGrey;
   color: $bright;
   font-family: sans-serif;
   margin: 0;
 }
 
 /* Code Mirror */
-
 #collabEditor {
   display: none;
   margin-top: 2em;
@@ -37,6 +37,7 @@ body {
   font-family: $handwrittenFont;
   font-size: 1.2rem;
   line-height: 1.8em;
+  height: 100%;
 }
 
 // // Overriding Codemirror styles - 
