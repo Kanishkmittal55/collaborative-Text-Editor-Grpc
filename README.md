@@ -1,4 +1,4 @@
-# Collaborative Realtime Texteditor [![Build Status](https://travis-ci.com/mountainflo/collaborative-text-editor.svg?token=4zw9EzexndWUV9DTxZpz&branch=master)](https://travis-ci.com/mountainflo/collaborative-text-editor)
+# Collaborative Realtime Texteditor 
 
 Collaborative realtime texteditor with gRPC using RGAs (Replicated Growable Arrays).
 
