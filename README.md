@@ -2,7 +2,7 @@
 
 Collaborative realtime texteditor with gRPC using RGAs (Replicated Growable Arrays).
 
-![Screenshoot Collaborative Texteditor](documentation/collab-texteditor-browser.png)
+![Screenshoot Collaborative Texteditor](documentation/components/collab-texteditor-browser.png)
 
 With the collaborative realtime texteditor several users can edit documents together in realtime.
 Via Remote-Cursors the current editing positions of the other users are always visible.
@@ -10,7 +10,7 @@ Via Remote-Cursors the current editing positions of the other users are always v
 The implementation of the collaborative realtime editor is using a variant of RGAs (Replicated Growable Arrays).
 The RGA-protocol is implemented as Timestamped Insertion Tree (TI Tree) and guarantees "Eventual Consistency".
 
-For more details about the implementation see: [documentation.md](documentation/documentation.md)
+For more details about the implementation see: [documentation.md](documentation/CRDT.md)
 
 ## Running the project
 
