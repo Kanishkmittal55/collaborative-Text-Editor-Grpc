@@ -10,7 +10,7 @@ Via Remote-Cursors the current editing positions of the other users are always v
 The implementation of the collaborative realtime editor is using a variant of RGAs (Replicated Growable Arrays).
 The RGA-protocol is implemented as Timestamped Insertion Tree (TI Tree) and guarantees "Eventual Consistency".
 
-For more details about the implementation see: [documentation.md](documentation/CRDT.md)
+For more details about the implementation see: [documentation.md](documentation/components/CRDT.md)
 
 ## Running the project
 
